@@ -39,12 +39,17 @@ func removeEmptyElement(words []string) []string {
 	return noSpace
 }
 
-func CreateMapForMessage(words []string) map[string] {
-synsetMap := make(map[string][]string)
+func CreateMapForMessage(words []string) map[string][]string {
+	synsetMap := make(map[string][]string)
 
-for _, word := range words {
-  synsetMap[word] = GetSynset(word)
+	for _, word := range words {
+		synsetMap[word] = GetSynset(word)
+	}
+
+	return synsetMap
 }
 
-return synsetMap
+func CallEverything(message string) map[string][]string {
+	words := MessageToWords(message)
+	return CreateMapForMessage(words)
 }
