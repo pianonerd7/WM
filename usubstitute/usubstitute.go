@@ -1,17 +1,19 @@
 package usubstitute
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
+	"syntacticsub/utility"
 	"syntacticsub/wordnet"
 )
 
 //TODO: have constants for parts of speech and integrate with ANC and BNC
 const ()
 
-// GetSynset takes in a word and returns a synset
-func GetSynset(word string) []string {
+// getSynset takes in a word and returns a synset
+func getSynset(word string) []string {
 	resultString := wordnet.FindTheInfo_ds(word, 1, 5, 0)
 
 	if resultString == "" {
@@ -35,9 +37,9 @@ func GetSynset(word string) []string {
 	return wordList
 }
 
-// MessageToWords takes in a string of words representing a message
+// messageToWords takes in a string of words representing a message
 // and splits the message to a splice of words
-func MessageToWords(message string) []string {
+func messageToWords(message string) []string {
 	delimeterRule := regexp.MustCompile("[^\\w']")
 
 	withPossibleSpace := delimeterRule.Split(message, -1)
@@ -56,11 +58,14 @@ func removeEmptyElement(words []string) []string {
 	return noSpace
 }
 
-func CreateMapForMessage(words []string) map[string][]string {
+// createMapForMessage takes in a slice of words and finds the synset
+// for every word in the slice, and if the synset is not empty, it
+// adds the word synset pair to the map
+func createMapForMessage(words []string) map[string][]string {
 	synsetMap := make(map[string][]string)
 
 	for _, word := range words {
-		synset := GetSynset(word)
+		synset := getSynset(word)
 		if synset != nil {
 			synsetMap[word] = synset
 		}
@@ -68,7 +73,8 @@ func CreateMapForMessage(words []string) map[string][]string {
 	return synsetMap
 }
 
-func CallEverything(message string) map[string][]string {
-	words := MessageToWords(strings.ToLower(message))
-	return CreateMapForMessage(words)
+func GetMapFromMessage(message string) map[string][]string {
+	words := messageToWords(strings.ToLower(message))
+	fmt.Println(utility.GenWatermark())
+	return createMapForMessage(words)
 }
