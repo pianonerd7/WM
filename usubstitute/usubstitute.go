@@ -19,10 +19,20 @@ func GetSynset(word string) []string {
 	}
 
 	delimeterRules := func(t rune) bool {
-		return t == '{' || t == '}' || t == ','
+		return t == '{' || t == '}' || t == ',' || t == ' '
 	}
 
-	return strings.FieldsFunc(resultString, delimeterRules)
+	mayContainOriginalWord := strings.FieldsFunc(resultString, delimeterRules)
+
+	var wordList []string
+
+	// Remove original word from slice
+	for _, wordInList := range mayContainOriginalWord {
+		if wordInList != word {
+			wordList = append(wordList, wordInList)
+		}
+	}
+	return wordList
 }
 
 // MessageToWords takes in a string of words representing a message
@@ -59,6 +69,6 @@ func CreateMapForMessage(words []string) map[string][]string {
 }
 
 func CallEverything(message string) map[string][]string {
-	words := MessageToWords(message)
+	words := MessageToWords(strings.ToLower(message))
 	return CreateMapForMessage(words)
 }
