@@ -38,3 +38,13 @@ func removeEmptyElement(words []string) []string {
 
 	return noSpace
 }
+
+func CreateMapForMessage(words []string) map[string] {
+synsetMap := make(map[string][]string)
+
+for _, word := range words {
+  synsetMap[word] = GetSynset(word)
+}
+
+return synsetMap
+}
