@@ -23,5 +23,18 @@ func GetSynset(word string) []string {
 func MessageToWords(message string) []string {
 	delimeterRule := regexp.MustCompile("[^\\w']")
 
-	return delimeterRule.Split(message, -1)
+	withPossibleSpace := delimeterRule.Split(message, -1)
+	return removeEmptyElement(withPossibleSpace)
+}
+
+func removeEmptyElement(words []string) []string {
+	var noSpace []string
+
+	for _, word := range words {
+		if word != "" {
+			noSpace = append(noSpace, word)
+		}
+	}
+
+	return noSpace
 }

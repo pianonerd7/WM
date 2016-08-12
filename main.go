@@ -8,8 +8,8 @@ import (
 
 func main() {
 	wordnet.InitWN()
-	word := "happy"
+	word := "Hello! How are you today!? I'm doing fine"
 	//fmt.Printf("Sense Results for '%s': %s\n", word, wordnet.FindTheInfo(word, 1, 5, 0))
 	//fmt.Printf("Sense Results for '%s': %s\n", word, wordnet.FindTheInfo_ds(word, 1, 5, 0))
-	fmt.Println(usubstitute.GetSynset(word))
+	fmt.Println(usubstitute.MessageToWords(word))
 }
