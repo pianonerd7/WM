@@ -7,9 +7,16 @@ import (
 	"syntacticsub/wordnet"
 )
 
+//TODO: have constants for parts of speech and integrate with ANC and BNC
+const ()
+
 // GetSynset takes in a word and returns a synset
 func GetSynset(word string) []string {
 	resultString := wordnet.FindTheInfo_ds(word, 1, 5, 0)
+
+	if resultString == "" {
+		return nil
+	}
 
 	delimeterRules := func(t rune) bool {
 		return t == '{' || t == '}' || t == ','
@@ -43,9 +50,11 @@ func CreateMapForMessage(words []string) map[string][]string {
 	synsetMap := make(map[string][]string)
 
 	for _, word := range words {
-		synsetMap[word] = GetSynset(word)
+		synset := GetSynset(word)
+		if synset != nil {
+			synsetMap[word] = synset
+		}
 	}
-
 	return synsetMap
 }
 

@@ -55,6 +55,9 @@ func FindTheInfo_ds(search string, dbase, ptrtyp, whichsense int) string {
 	cPtrtyp := C.int(ptrtyp)
 	cWhichsense := C.int(whichsense)
 	resultPtr := C.findtheinfo_ds(cSearch, cDbase, cPtrtyp, cWhichsense)
+	if resultPtr == nil {
+		return ""
+	}
 	resultChar := C.FmtSynset(resultPtr, 0)
 	result := C.GoString(resultChar)
 	return result
