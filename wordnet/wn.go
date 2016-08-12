@@ -12,9 +12,9 @@ static void printlicense() {
 }
 */
 import "C"
-import "unsafe"
 import (
 	"errors"
+	"unsafe"
 )
 
 func PrintLicenses() {
@@ -42,7 +42,20 @@ func FindTheInfo(search string, dbase, ptrtyp, whichsense int) string {
 	cDbase := C.int(dbase)
 	cPtrtyp := C.int(ptrtyp)
 	cWhichsense := C.int(whichsense)
-	result := C.findtheinfo(cSearch, cDbase, cPtrtyp, cWhichsense)
-	gRes := C.GoString(result)
-	return gRes
+	resultChar := C.findtheinfo(cSearch, cDbase, cPtrtyp, cWhichsense)
+	result := C.GoString(resultChar)
+	return result
+}
+
+func FindTheInfo_ds(search string, dbase, ptrtyp, whichsense int) string {
+	cSearch := C.CString(search)
+	defer C.free(unsafe.Pointer(cSearch))
+
+	cDbase := C.int(dbase)
+	cPtrtyp := C.int(ptrtyp)
+	cWhichsense := C.int(whichsense)
+	resultPtr := C.findtheinfo_ds(cSearch, cDbase, cPtrtyp, cWhichsense)
+	resultChar := C.FmtSynset(resultPtr, 0)
+	result := C.GoString(resultChar)
+	return result
 }
