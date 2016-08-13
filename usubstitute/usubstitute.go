@@ -40,7 +40,7 @@ func getSynset(word string) []string {
 // messageToWords takes in a string of words representing a message
 // and splits the message to a splice of words
 func messageToWords(message string) []string {
-	delimeterRule := regexp.MustCompile("[^\\w']")
+	delimeterRule := regexp.MustCompile("[^\\w]")
 
 	withPossibleSpace := delimeterRule.Split(message, -1)
 	return removeEmptyElement(withPossibleSpace)
@@ -75,6 +75,7 @@ func createMapForMessage(words []string) map[string][]string {
 
 func GetMapFromMessage(message string) map[string][]string {
 	words := messageToWords(strings.ToLower(message))
-	fmt.Println(utility.GenWatermark())
+	fmt.Println(words)
+	fmt.Println(utility.GetRandomBytes())
 	return createMapForMessage(words)
 }

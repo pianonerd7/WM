@@ -11,7 +11,7 @@ func random(min, max int) int {
 }
 
 // getRandomBytes return a splice of bits
-func getRandomBytes() []Bit {
+func GetRandomBytes() []Bit {
 	byteSlice := make([]byte, 2)
 	rand.Read(byteSlice)
 	return BytesToBits(byteSlice)
