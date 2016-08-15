@@ -40,9 +40,10 @@ func getSynset(word string) []string {
 // messageToWords takes in a string of words representing a message
 // and splits the message to a splice of words
 func messageToWords(message string) []string {
-	delimeterRule := regexp.MustCompile("[^\\w]")
+	fmt.Println(message)
+	delimeterRule := regexp.MustCompile(`[A-Za-z']+|[*?()$.,!-]`)
 
-	withPossibleSpace := delimeterRule.Split(message, -1)
+	withPossibleSpace := delimeterRule.FindAllString(message, -1)
 	return removeEmptyElement(withPossibleSpace)
 }
 
