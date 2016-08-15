@@ -38,7 +38,7 @@ func getSynset(word string) []string {
 
 // messageToWords takes in a string of words representing a message
 // and splits the message to a splice of words
-func messageToWords(message string) []string {
+func MessageToWords(message string) []string {
 	fmt.Println(message)
 	delimeterRule := regexp.MustCompile(`[A-Za-z’]+|[*?()$.,!“”–]`)
 
@@ -74,7 +74,7 @@ func createMapForMessage(words []string) map[string][]string {
 }
 
 func GetMapFromMessage(message string) map[string][]string {
-	words := messageToWords(strings.ToLower(message))
+	words := MessageToWords(strings.ToLower(message))
 	return createMapForMessage(words)
 }
 
@@ -83,6 +83,7 @@ type PuncLoc struct {
 	Punctuation string
 }
 
+// Is this function really needed?
 func getPunctuationIndex(words []string) []PuncLoc {
 	var punctuationIndex []PuncLoc
 
