@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"strings"
 
-	"syntacticsub/utility"
 	"syntacticsub/wordnet"
 )
 
@@ -41,7 +40,7 @@ func getSynset(word string) []string {
 // and splits the message to a splice of words
 func messageToWords(message string) []string {
 	fmt.Println(message)
-	delimeterRule := regexp.MustCompile(`[A-Za-z']+|[*?()$.,!-]`)
+	delimeterRule := regexp.MustCompile(`[A-Za-z’]+|[*?()$.,!“”–]`)
 
 	withPossibleSpace := delimeterRule.FindAllString(message, -1)
 	return removeEmptyElement(withPossibleSpace)
@@ -76,7 +75,29 @@ func createMapForMessage(words []string) map[string][]string {
 
 func GetMapFromMessage(message string) map[string][]string {
 	words := messageToWords(strings.ToLower(message))
-	fmt.Println(words)
-	fmt.Println(utility.GetRandomBytes())
 	return createMapForMessage(words)
+}
+
+type PuncLoc struct {
+	SliceIndex  int
+	Punctuation string
+}
+
+func getPunctuationIndex(words []string) []PuncLoc {
+	var punctuationIndex []PuncLoc
+
+	delimeterRule := regexp.MustCompile(`[*?()$.,!“”–]`)
+
+	for index, word := range words {
+		isPunctuation := delimeterRule.FindAllString(word, -1)
+		if len(isPunctuation) == 1 {
+			newPuncLoc := PuncLoc{
+				SliceIndex:  index,
+				Punctuation: word,
+			}
+			punctuationIndex = append(punctuationIndex, newPuncLoc)
+		}
+	}
+	fmt.Println(punctuationIndex)
+	return punctuationIndex
 }
