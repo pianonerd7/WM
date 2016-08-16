@@ -16,9 +16,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
-	_ "github.com/ziutek/mymysql/godrv"
+	_ "github.com/Go-SQL-Driver/MySQL"
 )
 
 const (
@@ -36,31 +35,28 @@ type Word struct {
 	Frequency int
 }
 
-func OpenDB() *sql.DB {
-	db, err := sql.Open("mymysql", fmt.Sprintf("%s/%s/%s", DB_NAME, DB_USER, DB_PASS))
+///Users/annahe/src/code.uber.internal/go/src/github.com/Go-SQL-Driver/MySQL
+func main() {
+	// sql.Open("mymysql", fmt.Sprintf("%s/%s/%s", DB_NAME, DB_USER, DB_PASS))
+	//db, err := sql.Open("mysql", "reckhou:reckhou@/test?charset=utf8") user:password@/dbname
+	db, err := sql.Open("mysql", "root:password@/ANCWordFreq?charset=utf8")
+	checkErr(err)
+
+	//Query
+	rows, err := db.Query("SELECT * FROM ANC WHERE Id=2")
+	checkErr(err)
+
+	for rows.Next() {
+		word := new(Word)
+		err = rows.Scan(&word.Word, &word.Lemma, &word.POS, &word.Frequency, &word.Id)
+		checkErr(err)
+		fmt.Println(word)
+	}
+
+}
+
+func checkErr(err error) {
 	if err != nil {
 		panic(err)
-		log.Fatal(err)
 	}
-	return db
-}
-
-func UserById(id int) *Word {
-	db := OpenDB()
-	defer db.Close()
-	row := db.QueryRow("SELECT id, word, lemma, POS, Frequency FROM ANC WHERE id=?", id)
-	word := new(Word)
-	row.Scan(&word.Id, &word.Word, &word.Lemma, &word.POS, &word.Frequency)
-	return word
-}
-
-func main() {
-	db := OpenDB()
-	defer db.Close()
-	row := db.QueryRow("SELECT Word, lemma, POS, Frequency, Id FROM ANC WHERE Id=1")
-	word := new(Word)
-	row.Scan(&word.Id, &word.Word, &word.Lemma, &word.POS, &word.Frequency)
-	fmt.Println(word)
-	//fmt.Println("id    : " + strconv.Itoa(user.Id) + "word  : " + word.Word + "frequency : \n" + word.Frequency)
-
 }
