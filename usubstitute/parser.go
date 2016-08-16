@@ -9,39 +9,32 @@ import (
 	"syntacticsub/wordnet"
 )
 
-
-const (
-	"Noun" = {"EX", "NN", "NNP", "NNPS", "NNS", "NNS|VBZ", "NN|CD", "NN|JJ"},
-	Verb = {"VB", "VBD", "VBG", "VBG|NN", "VBN", "VBP", "VBZ"},
-	Adjective = {"JJ", "JJR", "JJS"},
-	Adverb = {"EX", "WRB", "RP", "RB", "RBR", "RBS"},
-)
-
-PartsOfSpeechTagMap := map[string]string {
-	"EX" : "Noun",
-	"NN" : "Noun",
-	"NNP" : "Noun",
-	"NNPS" : "Noun",
-	"NNS" : "Noun",
-	"NNS|VBZ" : "Noun",
-	"NN|CD" : "Noun",
-	"NN|JJ" : "Noun",
-	"VB" : "Verb",
-	"VBD" : "Verb",
-	"VBG" : "Verb",
-	"VBG|NN" : "Verb",
-	"VBN" : "Verb",
-	"VBP" : "Verb",
-	"VBZ" : "Verb",
-	"JJ" : "Adjective",
-	"JJR" : "Adjective",
-	"JJS" : "Adjective",
-	"EX" : "Adverb",
-	"WRB" : "Adverb",
-	"RP" : "Adverb",
-	"RB" : "Adverb",
-	"RBR" : "Adverb",
-	"RBS" : "Adverb",
+func getPOSTagMap() map[string]string {
+	PartsOfSpeechTagMap := map[string]string{
+		"NN":      "Noun",
+		"NNP":     "Noun",
+		"NNPS":    "Noun",
+		"NNS":     "Noun",
+		"NNS|VBZ": "Noun",
+		"NN|CD":   "Noun",
+		"NN|JJ":   "Noun",
+		"VB":      "Verb",
+		"VBD":     "Verb",
+		"VBG":     "Verb",
+		"VBG|NN":  "Verb",
+		"VBN":     "Verb",
+		"VBP":     "Verb",
+		"VBZ":     "Verb",
+		"JJ":      "Adjective",
+		"JJR":     "Adjective",
+		"JJS":     "Adjective",
+		"WRB":     "Adverb",
+		"RP":      "Adverb",
+		"RB":      "Adverb",
+		"RBR":     "Adverb",
+		"RBS":     "Adverb",
+	}
+	return PartsOfSpeechTagMap
 }
 
 func GetPOS(word string) string {
@@ -50,11 +43,11 @@ func GetPOS(word string) string {
 	var pos string
 	if len(words) > 0 {
 		pos = words[0].POS
-		fmt.Println(pos)
 	}
 
-
-	return ""
+	fmt.Println("POS TAG IS...")
+	fmt.Println(getPOSTagMap()[pos])
+	return getPOSTagMap()[pos]
 }
 
 // getSynset takes in a word and returns a synset
