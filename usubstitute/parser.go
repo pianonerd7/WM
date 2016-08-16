@@ -5,11 +5,57 @@ import (
 	"regexp"
 	"strings"
 
+	"syntacticsub/sql"
 	"syntacticsub/wordnet"
 )
 
-//TODO: have constants for parts of speech and integrate with ANC and BNC
-const ()
+
+const (
+	"Noun" = {"EX", "NN", "NNP", "NNPS", "NNS", "NNS|VBZ", "NN|CD", "NN|JJ"},
+	Verb = {"VB", "VBD", "VBG", "VBG|NN", "VBN", "VBP", "VBZ"},
+	Adjective = {"JJ", "JJR", "JJS"},
+	Adverb = {"EX", "WRB", "RP", "RB", "RBR", "RBS"},
+)
+
+PartsOfSpeechTagMap := map[string]string {
+	"EX" : "Noun",
+	"NN" : "Noun",
+	"NNP" : "Noun",
+	"NNPS" : "Noun",
+	"NNS" : "Noun",
+	"NNS|VBZ" : "Noun",
+	"NN|CD" : "Noun",
+	"NN|JJ" : "Noun",
+	"VB" : "Verb",
+	"VBD" : "Verb",
+	"VBG" : "Verb",
+	"VBG|NN" : "Verb",
+	"VBN" : "Verb",
+	"VBP" : "Verb",
+	"VBZ" : "Verb",
+	"JJ" : "Adjective",
+	"JJR" : "Adjective",
+	"JJS" : "Adjective",
+	"EX" : "Adverb",
+	"WRB" : "Adverb",
+	"RP" : "Adverb",
+	"RB" : "Adverb",
+	"RBR" : "Adverb",
+	"RBS" : "Adverb",
+}
+
+func GetPOS(word string) string {
+	words := sql.QueryByWord(word)
+
+	var pos string
+	if len(words) > 0 {
+		pos = words[0].POS
+		fmt.Println(pos)
+	}
+
+
+	return ""
+}
 
 // getSynset takes in a word and returns a synset
 func getSynset(word string) []string {
