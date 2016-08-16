@@ -48,6 +48,25 @@ func QueryByWord(word string) []Word {
 	return wordSlice
 }
 
+func QueryByPOS(word string) []Word {
+	db := OpenDB()
+	defer db.Close()
+
+	query := fmt.Sprintf("SELECT * FROM ANC WHERE POS='%s'", word)
+	rows, err := db.Query(query)
+	checkErr(err)
+
+	var wordSlice []Word
+	for rows.Next() {
+		word := new(Word)
+		err = rows.Scan(&word.Word, &word.Lemma, &word.POS, &word.Frequency, &word.Id)
+		checkErr(err)
+		fmt.Println(word)
+		wordSlice = append(wordSlice, *word)
+	}
+	return wordSlice
+}
+
 func checkErr(err error) {
 	if err != nil {
 		log.Fatal(err)
