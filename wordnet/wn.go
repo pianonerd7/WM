@@ -30,13 +30,15 @@ func InitWN() (err error) {
 	return nil
 }
 
-const (
-	Noun                = 1
-	Verb                = 2
-	Adjective           = 3
-	Adverb              = 4
-	Adjective_Satellite = 5
-)
+func getPOSMap() map[string]int {
+	partsOfSpeechMap := map[string]int{
+		"Noun":      1,
+		"Verb":      2,
+		"Adjective": 3,
+		"Adverb":    4,
+	}
+	return partsOfSpeechMap
+}
 
 // search is the item to search for, e.g. 'house'.
 // dbase maps the the 'pos' or Part Of Speech, e.g. Noun, Verb, Adjective or Adverb
