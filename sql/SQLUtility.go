@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"sort"
 
 	_ "github.com/Go-SQL-Driver/MySQL"
 )
@@ -23,13 +24,33 @@ type Word struct {
 	Frequency int
 }
 
+type Words []*Word
+
+func (slice Words) Len() int {
+	return len(slice)
+}
+
+func (slice Words) Less(i, j int) bool {
+	return slice[i].Frequency < slice[j].Frequency
+}
+
+func (slice Words) Swap(i, j int) {
+	slice[i], slice[j] = slice[j], slice[i]
+}
+
+type ByFrequency struct{ Words }
+
+func (s ByFrequency) Less(i, j int) bool {
+	return s.Words[i].Frequency >= s.Words[j].Frequency
+}
+
 func OpenDB() *sql.DB {
 	db, err := sql.Open("mysql", "root:password@/ANCWordFreq?charset=utf8")
 	checkErr(err)
 	return db
 }
 
-func QueryByWord(word string) []Word {
+func QueryByWord(word string) Words {
 	db := OpenDB()
 	defer db.Close()
 
@@ -37,13 +58,19 @@ func QueryByWord(word string) []Word {
 	rows, err := db.Query(query)
 	checkErr(err)
 
-	var wordSlice []Word
+	var wordSlice Words
+
 	for rows.Next() {
 		word := new(Word)
 		err = rows.Scan(&word.Word, &word.Lemma, &word.POS, &word.Frequency, &word.Id)
 		checkErr(err)
-		fmt.Println(word)
-		wordSlice = append(wordSlice, *word)
+		wordSlice = append(wordSlice, word)
+	}
+
+	sort.Sort(ByFrequency{wordSlice})
+
+	for _, o := range wordSlice {
+		fmt.Println(o)
 	}
 	return wordSlice
 }
@@ -61,7 +88,6 @@ func QueryByPOS(word string) []Word {
 		word := new(Word)
 		err = rows.Scan(&word.Word, &word.Lemma, &word.POS, &word.Frequency, &word.Id)
 		checkErr(err)
-		fmt.Println(word)
 		wordSlice = append(wordSlice, *word)
 	}
 	return wordSlice
