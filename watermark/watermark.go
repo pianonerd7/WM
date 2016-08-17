@@ -3,8 +3,9 @@ package watermark
 import (
 	"bytes"
 	"fmt"
-	"syntacticsub/usubstitute"
-	"syntacticsub/utility"
+
+	"code.uber.internal/engsec/syntacticsub/usubstitute"
+	"code.uber.internal/engsec/syntacticsub/utility"
 )
 
 func EmbedMessage(message string) string {

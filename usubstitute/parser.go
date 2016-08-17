@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strings"
 
-	"syntacticsub/sql"
-	"syntacticsub/wordnet"
+	"code.uber.internal/engsec/syntacticsub/sql"
+	"code.uber.internal/engsec/syntacticsub/wordnet"
 )
 
 func getPOSTagMap() map[string]string {
