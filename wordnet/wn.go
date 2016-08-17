@@ -30,7 +30,7 @@ func InitWN() (err error) {
 	return nil
 }
 
-func getPOSMap() map[string]int {
+func GetPOSMap() map[string]int {
 	partsOfSpeechMap := map[string]int{
 		"Noun":      1,
 		"Verb":      2,
@@ -71,4 +71,17 @@ func FindTheInfo_ds(search string, dbase, ptrtyp, whichsense int) string {
 	resultChar := C.FmtSynset(resultPtr, 0)
 	result := C.GoString(resultChar)
 	return result
+}
+
+func GetSenseLength(search string, dbase, ptrtyp int) int {
+	count := 1
+
+	for count < 50 {
+		if FindTheInfo(search, dbase, ptrtyp, count) == "" {
+			return count - 1
+		}
+		count += 1
+	}
+
+	return count
 }
