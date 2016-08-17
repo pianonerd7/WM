@@ -2,24 +2,34 @@ package watermark
 
 import (
 	"bytes"
+	"fmt"
 	"syntacticsub/usubstitute"
+	"syntacticsub/utility"
 )
 
 func EmbedMessage(message string) string {
 	synsetMap := usubstitute.GetMapFromMessage(message)
-	//bitSecret := utility.GetRandomBytes()
+	bitSecret := utility.GetRandomBytes()
+	fmt.Println(bitSecret)
 	wordWithPunc := usubstitute.MessageToWords(message)
 
+	bitIndex := 0
 	var watermarkedMessage bytes.Buffer
 
 	for _, word := range wordWithPunc {
 		if synsetMap[word] != nil {
-			watermarkedMessage.WriteString(synsetMap[word][0] + " ")
+			fmt.Printf("Index: %v, value: %v \n", bitIndex%len(bitSecret), bitSecret[bitIndex%len(bitSecret)])
+			if bitSecret[bitIndex%len(bitSecret)] == utility.One {
+				watermarkedMessage.WriteString(synsetMap[word][0] + " ")
+			} else {
+				watermarkedMessage.WriteString(word + " ")
+			}
+			fmt.Printf("Word: %v, replacement: %v\n", word, synsetMap[word][0])
+			bitIndex++
 		} else {
 			watermarkedMessage.WriteString(word + " ")
 		}
 	}
-
 	return watermarkedMessage.String()
 }
 
@@ -27,6 +37,10 @@ func ExtractMessage(originalMessage, embeddedMessage string) string {
 	synsetMap := usubstitute.GetMapFromMessage(originalMessage)
 	wordWithPuncOriginal := usubstitute.MessageToWords(originalMessage)
 	wordWithPuncEmbedded := usubstitute.MessageToWords(embeddedMessage)
+
+	for i, word := range wordWithPuncEmbedded {
+		fmt.Printf("(%v, %v), ", i, word)
+	}
 
 	var watermarkedMessage bytes.Buffer
 
