@@ -10,7 +10,7 @@ import (
 )
 
 func getPOSTagMap() map[string]string {
-	PartsOfSpeechTagMap := map[string]string{
+	partsOfSpeechTagMap := map[string]string{
 		"NN":      "Noun",
 		"NNP":     "Noun",
 		"NNPS":    "Noun",
@@ -34,10 +34,10 @@ func getPOSTagMap() map[string]string {
 		"RBR":     "Adverb",
 		"RBS":     "Adverb",
 	}
-	return PartsOfSpeechTagMap
+	return partsOfSpeechTagMap
 }
 
-func GetPOS(word string) string {
+func getPOS(word string) string {
 	words := sql.QueryByWord(word)
 
 	var pos string
@@ -45,14 +45,14 @@ func GetPOS(word string) string {
 		pos = words[0].POS
 	}
 
-	fmt.Println("POS TAG IS...")
-	fmt.Println(getPOSTagMap()[pos])
+	//fmt.Println("POS TAG IS...")
+	//fmt.Println(getPOSTagMap()[pos])
 	return getPOSTagMap()[pos]
 }
 
 // getSynset takes in a word and returns a synset
-func getSynset(word string) []string {
-	resultString := wordnet.FindTheInfo_ds(word, 1, 5, 0)
+func getSynset(word string, wordnetPOSNumber, whichSense int) []string {
+	resultString := wordnet.FindTheInfo_ds(word, wordnetPOSNumber, 23, whichSense)
 
 	if resultString == "" {
 		return nil
@@ -75,11 +75,36 @@ func getSynset(word string) []string {
 	return wordList
 }
 
+func GetAllSynset(word string) []string {
+	PossiblePOSTag := getPOS(word)
+	wordnetPOSNumber := wordnet.GetPOSMap()[PossiblePOSTag]
+	//fmt.Println(wordnetPOSNumber)
+
+	if wordnetPOSNumber == 0 {
+		return nil
+	}
+
+	senseCount := wordnet.GetSenseLength(word, wordnetPOSNumber, 23)
+	var uniqueSenses []string
+
+	for i := 1; i <= senseCount; i++ {
+		newSet := getSynset(word, wordnetPOSNumber, i)
+		for _, newSense := range newSet {
+			if !didPassAllFilter(newSense, uniqueSenses) {
+				uniqueSenses = append(uniqueSenses, newSense)
+			}
+		}
+	}
+
+	//fmt.Println(len(uniqueSenses))
+	return uniqueSenses
+}
+
 // messageToWords takes in a string of words representing a message
 // and splits the message to a splice of words
 func MessageToWords(message string) []string {
-	fmt.Println(message)
-	delimeterRule := regexp.MustCompile(`[A-Za-z’]+|[*?()$.,!“”–]`)
+	//delimeterRule := regexp.MustCompile(`[A-Za-z-]+|[A-Za-z’]+|[*?()$.,!“”]`)
+	delimeterRule := regexp.MustCompile(`[A-Za-z’]+|[*?()$.,!“”]`)
 
 	withPossibleSpace := delimeterRule.FindAllString(message, -1)
 	return removeEmptyElement(withPossibleSpace)
@@ -104,7 +129,7 @@ func createMapForMessage(words []string) map[string][]string {
 	synsetMap := make(map[string][]string)
 
 	for _, word := range words {
-		synset := getSynset(word)
+		synset := GetAllSynset(word)
 		if synset != nil {
 			synsetMap[word] = synset
 		}
@@ -113,31 +138,7 @@ func createMapForMessage(words []string) map[string][]string {
 }
 
 func GetMapFromMessage(message string) map[string][]string {
-	words := MessageToWords(strings.ToLower(message))
+	words := MessageToWords(strings.ToLower(message)) //TODO: should this be tolower? they'll get compared and they wont be the same
+	fmt.Println(words)
 	return createMapForMessage(words)
-}
-
-type PuncLoc struct {
-	SliceIndex  int
-	Punctuation string
-}
-
-// Is this function really needed?
-func getPunctuationIndex(words []string) []PuncLoc {
-	var punctuationIndex []PuncLoc
-
-	delimeterRule := regexp.MustCompile(`[*?()$.,!“”–]`)
-
-	for index, word := range words {
-		isPunctuation := delimeterRule.FindAllString(word, -1)
-		if len(isPunctuation) == 1 {
-			newPuncLoc := PuncLoc{
-				SliceIndex:  index,
-				Punctuation: word,
-			}
-			punctuationIndex = append(punctuationIndex, newPuncLoc)
-		}
-	}
-	fmt.Println(punctuationIndex)
-	return punctuationIndex
 }
