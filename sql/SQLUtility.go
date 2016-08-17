@@ -59,7 +59,6 @@ func QueryByWord(word string) Words {
 	checkErr(err)
 
 	var wordSlice Words
-
 	for rows.Next() {
 		word := new(Word)
 		err = rows.Scan(&word.Word, &word.Lemma, &word.POS, &word.Frequency, &word.Id)
@@ -68,14 +67,14 @@ func QueryByWord(word string) Words {
 	}
 
 	sort.Sort(ByFrequency{wordSlice})
-
-	for _, o := range wordSlice {
-		fmt.Println(o)
-	}
+	/*
+		for _, o := range wordSlice {
+			fmt.Println(o)
+		}*/
 	return wordSlice
 }
 
-func QueryByPOS(word string) []Word {
+func QueryByPOS(word string) Words {
 	db := OpenDB()
 	defer db.Close()
 
@@ -83,13 +82,19 @@ func QueryByPOS(word string) []Word {
 	rows, err := db.Query(query)
 	checkErr(err)
 
-	var wordSlice []Word
+	var wordSlice Words
 	for rows.Next() {
 		word := new(Word)
 		err = rows.Scan(&word.Word, &word.Lemma, &word.POS, &word.Frequency, &word.Id)
 		checkErr(err)
-		wordSlice = append(wordSlice, *word)
+		wordSlice = append(wordSlice, word)
 	}
+
+	sort.Sort(ByFrequency{wordSlice})
+	/*
+		for _, o := range wordSlice {
+			fmt.Println(o)
+		} */
 	return wordSlice
 }
 
