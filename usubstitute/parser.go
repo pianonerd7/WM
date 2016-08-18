@@ -96,15 +96,51 @@ func GetAllSynset(word string) []string {
 		}
 	}
 
-	//fmt.Println(len(uniqueSenses))
-	return uniqueSenses
+	if len(uniqueSenses) < 2 {
+		return uniqueSenses
+	}
+
+	return sortStringSliceByFrequency(uniqueSenses)
+}
+
+func sortStringSliceByFrequency(words []string) []string {
+	var wordSlice sql.Words
+
+	for _, word := range words {
+		//fmt.Println(word)
+		newWord := sql.GetHighestFreqForWord(word)
+
+		x := newWord.Word
+		if x != "" {
+			wordSlice = append(wordSlice, &newWord)
+		}
+	}
+
+	return wordsSliceToStringSlice(wordSlice)
+}
+
+func wordsSliceToStringSlice(words sql.Words) []string {
+	/*fmt.Println()
+	for _, o := range words {
+		fmt.Println(o)
+	}
+	*/
+	var stringSlice []string
+
+	for _, word := range words {
+		if word.Word != "" {
+			stringSlice = append(stringSlice, word.Word)
+		}
+	}
+
+	return stringSlice
 }
 
 // messageToWords takes in a string of words representing a message
 // and splits the message to a splice of words
 func MessageToWords(message string) []string {
-	//delimeterRule := regexp.MustCompile(`[A-Za-z-]+|[A-Za-z’]+|[*?()$.,!“”]`)
-	delimeterRule := regexp.MustCompile(`[A-Za-z’]+|[*?()$.,!“”]`)
+	delimeterRule := regexp.MustCompile(`[A-Za-z-]+|[A-Za-z’]+|[*?()$.,!“”]`)
+	//delimeterRule := regexp.MustCompile(`[A-Za-z’]+|[*?()$.,!“”]`)
 
 	withPossibleSpace := delimeterRule.FindAllString(message, -1)
 	return removeEmptyElement(withPossibleSpace)
