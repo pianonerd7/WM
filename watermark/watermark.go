@@ -21,13 +21,11 @@ func EmbedMessage(message string) string {
 
 	for _, word := range wordWithPunc {
 		if synsetMap[word] != nil {
-			//fmt.Printf("Index: %v, value: %v \n", bitIndex%len(bitSecret), bitSecret[bitIndex%len(bitSecret)])
 			if bitSecret[bitIndex%len(bitSecret)] == utility.One {
 				watermarkedMessage.WriteString(synsetMap[word][0] + " ")
 			} else {
 				watermarkedMessage.WriteString(word + " ")
 			}
-			//fmt.Printf("Word: %v, replacement: %v\n", word, synsetMap[word][0])
 			bitIndex++
 		} else {
 			watermarkedMessage.WriteString(word + " ")
@@ -38,7 +36,21 @@ func EmbedMessage(message string) string {
 		panic("The secret was not fully embedded")
 	}
 
-	return watermarkedMessage.String()
+	return formatEmbeddedMessage([]byte(watermarkedMessage.String()))
+}
+
+// FormatEmbeddedMessage takes a byte array and removes all the spaces
+// prior to a punctuation
+func formatEmbeddedMessage(embeddedMessage []byte) string {
+	punctuation := "*?()$.,!“”"
+	for index, character := range embeddedMessage {
+		if bytes.IndexAny([]byte{character}, punctuation) >= 0 {
+			if (index-1 >= 0) && (embeddedMessage[index-1] == ' ') {
+				embeddedMessage = append(embeddedMessage[:index-1], embeddedMessage[index:]...)
+			}
+		}
+	}
+	return string(embeddedMessage[:])
 }
 
 // ExtractMessage takes the original message and the watermarked message
