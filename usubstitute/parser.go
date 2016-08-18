@@ -138,7 +138,7 @@ func createMapForMessage(words []string) map[string][]string {
 }
 
 func GetMapFromMessage(message string) map[string][]string {
-	words := MessageToWords(strings.ToLower(message)) //TODO: should this be tolower? they'll get compared and they wont be the same
+	words := MessageToWords(message)
 	fmt.Println(words)
 	return createMapForMessage(words)
 }
