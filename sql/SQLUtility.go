@@ -74,6 +74,16 @@ func QueryByWord(word string) Words {
 	return wordSlice
 }
 
+func GetHighestFreqForWord(word string) Word {
+	words := QueryByWord(word)
+
+	if words.Len() == 0 {
+		return *new(Word)
+	}
+
+	return *(words[0])
+}
+
 func QueryByPOS(word string) Words {
 	db := OpenDB()
 	defer db.Close()
@@ -100,6 +110,7 @@ func QueryByPOS(word string) Words {
 
 func checkErr(err error) {
 	if err != nil {
+		fmt.Printf("\nERROR\n")
 		log.Fatal(err)
 		panic(err)
 	}
