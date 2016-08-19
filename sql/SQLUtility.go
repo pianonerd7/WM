@@ -67,10 +67,6 @@ func QueryByWord(word string) Words {
 	}
 
 	sort.Sort(ByFrequency{wordSlice})
-	/*
-		for _, o := range wordSlice {
-			fmt.Println(o)
-		}*/
 	return wordSlice
 }
 
@@ -84,11 +80,11 @@ func GetHighestFreqForWord(word string) Word {
 	return *(words[0])
 }
 
-func QueryByPOS(word string) Words {
+func QueryByPOS(pos string) Words {
 	db := OpenDB()
 	defer db.Close()
 
-	query := fmt.Sprintf("SELECT * FROM ANC WHERE POS='%s'", word)
+	query := fmt.Sprintf("SELECT * FROM ANC WHERE POS='%s'", pos)
 	rows, err := db.Query(query)
 	checkErr(err)
 
@@ -101,10 +97,6 @@ func QueryByPOS(word string) Words {
 	}
 
 	sort.Sort(ByFrequency{wordSlice})
-	/*
-		for _, o := range wordSlice {
-			fmt.Println(o)
-		} */
 	return wordSlice
 }
 

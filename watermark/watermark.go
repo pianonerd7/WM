@@ -42,7 +42,7 @@ func EmbedMessage(message string) string {
 // FormatEmbeddedMessage takes a byte array and removes all the spaces
 // prior to a punctuation
 func formatEmbeddedMessage(embeddedMessage []byte) string {
-	punctuation := "*?()$.,!“”"
+	punctuation := "’'*?()$.,!“”"
 	for index, character := range embeddedMessage {
 		if bytes.IndexAny([]byte{character}, punctuation) >= 0 {
 			if (index-1 >= 0) && (embeddedMessage[index-1] == ' ') {

@@ -6,36 +6,9 @@ import (
 	"strings"
 
 	"code.uber.internal/engsec/syntacticsub/sql"
+	"code.uber.internal/engsec/syntacticsub/utility"
 	"code.uber.internal/engsec/syntacticsub/wordnet"
 )
-
-func getPOSTagMap() map[string]string {
-	partsOfSpeechTagMap := map[string]string{
-		"NN":      "Noun",
-		"NNP":     "Noun",
-		"NNPS":    "Noun",
-		"NNS":     "Noun",
-		"NNS|VBZ": "Noun",
-		"NN|CD":   "Noun",
-		"NN|JJ":   "Noun",
-		"VB":      "Verb",
-		"VBD":     "Verb",
-		"VBG":     "Verb",
-		"VBG|NN":  "Verb",
-		"VBN":     "Verb",
-		"VBP":     "Verb",
-		"VBZ":     "Verb",
-		"JJ":      "Adjective",
-		"JJR":     "Adjective",
-		"JJS":     "Adjective",
-		"WRB":     "Adverb",
-		"RP":      "Adverb",
-		"RB":      "Adverb",
-		"RBR":     "Adverb",
-		"RBS":     "Adverb",
-	}
-	return partsOfSpeechTagMap
-}
 
 func getPOS(word string) string {
 	words := sql.QueryByWord(word)
@@ -47,12 +20,12 @@ func getPOS(word string) string {
 
 	//fmt.Println("POS TAG IS...")
 	//fmt.Println(getPOSTagMap()[pos])
-	return getPOSTagMap()[pos]
+	return utility.GetPOSTagMap()[pos]
 }
 
 // getSynset takes in a word and returns a synset
 func getSynset(word string, wordnetPOSNumber, whichSense int) []string {
-	resultString := wordnet.FindTheInfo_ds(word, wordnetPOSNumber, 23, whichSense)
+	resultString := wordnet.FindTheInfoDs(word, wordnetPOSNumber, 23, whichSense)
 
 	if resultString == "" {
 		return nil
@@ -77,7 +50,7 @@ func getSynset(word string, wordnetPOSNumber, whichSense int) []string {
 
 func GetAllSynset(word string) []string {
 	PossiblePOSTag := getPOS(word)
-	wordnetPOSNumber := wordnet.GetPOSMap()[PossiblePOSTag]
+	wordnetPOSNumber := utility.GetPOSMap()[PossiblePOSTag]
 	//fmt.Println(wordnetPOSNumber)
 
 	if wordnetPOSNumber == 0 {
@@ -90,7 +63,7 @@ func GetAllSynset(word string) []string {
 	for i := 1; i <= senseCount; i++ {
 		newSet := getSynset(word, wordnetPOSNumber, i)
 		for _, newSense := range newSet {
-			if !didPassAllFilter(newSense, uniqueSenses) {
+			if !didPassAllFilterForSynset(newSense, uniqueSenses) {
 				uniqueSenses = append(uniqueSenses, newSense)
 			}
 		}
@@ -139,7 +112,7 @@ func wordsSliceToStringSlice(words sql.Words) []string {
 // messageToWords takes in a string of words representing a message
 // and splits the message to a splice of words
 func MessageToWords(message string) []string {
-	delimeterRule := regexp.MustCompile(`[A-Za-z-]+|[A-Za-z’]+|[*?()$.,!“”]`)
+	delimeterRule := regexp.MustCompile(`[A-Za-z']+|[*?()$.,!“”]`)
 	//delimeterRule := regexp.MustCompile(`[A-Za-z’]+|[*?()$.,!“”]`)
 
 	withPossibleSpace := delimeterRule.FindAllString(message, -1)
@@ -165,6 +138,9 @@ func createMapForMessage(words []string) map[string][]string {
 	synsetMap := make(map[string][]string)
 
 	for _, word := range words {
+		if !isQualifyingWord(word) {
+			continue
+		}
 		synset := GetAllSynset(word)
 		if synset != nil {
 			synsetMap[word] = synset
@@ -177,4 +153,14 @@ func GetMapFromMessage(message string) map[string][]string {
 	words := MessageToWords(message)
 	fmt.Println(words)
 	return createMapForMessage(words)
+}
+
+// cleanString takes in the original message and converts to ASCII
+func cleanString(originalMessage string) string {
+	for _, char := range originalMessage {
+		if char > 127 {
+
+		}
+	}
+	return ""
 }

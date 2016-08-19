@@ -17,11 +17,13 @@ import (
 	"unsafe"
 )
 
+// PrintLicenses is a mandatory function that must be included here
+// or else wordnet won't work
 func PrintLicenses() {
 	C.printlicense()
 }
 
-// initialize WordNet
+// InitWN initializes WordNet
 func InitWN() (err error) {
 	status := C.wninit()
 	if int(status) != 0 {
@@ -30,21 +32,10 @@ func InitWN() (err error) {
 	return nil
 }
 
-func GetPOSMap() map[string]int {
-	partsOfSpeechMap := map[string]int{
-		"Noun":      1,
-		"Verb":      2,
-		"Adjective": 3,
-		"Adverb":    4,
-	}
-	return partsOfSpeechMap
-}
-
 // search is the item to search for, e.g. 'house'.
 // dbase maps the the 'pos' or Part Of Speech, e.g. Noun, Verb, Adjective or Adverb
 // ptrtyp is the search type. Example are ANTPTR, CAUSETO, et..
 // whichsense should be set to 0 (ALLSENSES) to get all meanings.
-
 func FindTheInfo(search string, dbase, ptrtyp, whichsense int) string {
 	cSearch := C.CString(search)
 	defer C.free(unsafe.Pointer(cSearch))
@@ -57,7 +48,9 @@ func FindTheInfo(search string, dbase, ptrtyp, whichsense int) string {
 	return result
 }
 
-func FindTheInfo_ds(search string, dbase, ptrtyp, whichsense int) string {
+// FindTheInfoDs queries wordnet for the word, parts of sppech and the sensenumber
+// and returns the synset for that word in the form of a string
+func FindTheInfoDs(search string, dbase, ptrtyp, whichsense int) string {
 	cSearch := C.CString(search)
 	defer C.free(unsafe.Pointer(cSearch))
 
@@ -73,6 +66,8 @@ func FindTheInfo_ds(search string, dbase, ptrtyp, whichsense int) string {
 	return result
 }
 
+// GetSenseLength queries wordnet for the string, and parts of Speech
+// and returns how many senses there are
 func GetSenseLength(search string, dbase, ptrtyp int) int {
 	count := 1
 
@@ -80,7 +75,7 @@ func GetSenseLength(search string, dbase, ptrtyp int) int {
 		if FindTheInfo(search, dbase, ptrtyp, count) == "" {
 			return count - 1
 		}
-		count += 1
+		count++
 	}
 
 	return count
