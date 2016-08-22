@@ -107,3 +107,67 @@ func checkErr(err error) {
 		panic(err)
 	}
 }
+
+// GetUserWatermark takes an email and returns the watermark for that email
+// if it exists
+func GetUserWatermark(email string) string {
+	db := OpenDB()
+	defer db.Close()
+
+	query := fmt.Sprintf("SELECT secret FROM USERS WHERE email='%s'", email)
+	rows, err := db.Query(query)
+	checkErr(err)
+
+	var watermark string
+	for rows.Next() {
+		err = rows.Scan(&watermark)
+		checkErr(err)
+	}
+	return watermark
+}
+
+// QueryByUserWatermark takes a watermark and returns the email associted
+// with that watermark if it exists
+func CountUserWatermark(watermark string) int {
+	db := OpenDB()
+	defer db.Close()
+
+	query := fmt.Sprintf("SELECT COUNT(*) FROM USERS WHERE secret='%s'", watermark)
+	rows, err := db.Query(query)
+	checkErr(err)
+
+	var count int
+	for rows.Next() {
+		err = rows.Scan(&count)
+		checkErr(err)
+	}
+	return count
+}
+
+func CountUserEmail(email string) int {
+	db := OpenDB()
+	defer db.Close()
+
+	query := fmt.Sprintf("SELECT COUNT(*) FROM USERS WHERE email='%s'", email)
+	rows, err := db.Query(query)
+	checkErr(err)
+
+	var count int
+	for rows.Next() {
+		err = rows.Scan(&count)
+		checkErr(err)
+	}
+	return count
+}
+
+// InsertNewUser takes an email and a watermark and adds a row to the
+func InsertNewUser(email string, secret string) {
+	db := OpenDB()
+	defer db.Close()
+
+	stmt, err := db.Prepare("INSERT USERS SET email=?, secret=?")
+	checkErr(err)
+
+	_, err = stmt.Exec(email, secret)
+	checkErr(err)
+}
