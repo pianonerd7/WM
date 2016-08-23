@@ -108,9 +108,9 @@ func checkErr(err error) {
 	}
 }
 
-// GetUserWatermark takes an email and returns the watermark for that email
+// GetUserWatermarkFromEmail takes an email and returns the watermark for that email
 // if it exists
-func GetUserWatermark(email string) string {
+func GetUserWatermarkFromEmail(email string) string {
 	db := OpenDB()
 	defer db.Close()
 
@@ -124,6 +124,24 @@ func GetUserWatermark(email string) string {
 		checkErr(err)
 	}
 	return watermark
+}
+
+// GetUserEmailFromWaterMark takes an email and returns the watermark for that email
+// if it exists
+func GetUserEmailFromWaterMark(watermark string) string {
+	db := OpenDB()
+	defer db.Close()
+
+	query := fmt.Sprintf("SELECT email FROM USERS WHERE secret='%s'", watermark)
+	rows, err := db.Query(query)
+	checkErr(err)
+
+	var email string
+	for rows.Next() {
+		err = rows.Scan(&email)
+		checkErr(err)
+	}
+	return email
 }
 
 // QueryByUserWatermark takes a watermark and returns the email associted
