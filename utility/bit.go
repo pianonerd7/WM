@@ -1,6 +1,8 @@
 // Package bit provides convenient way to operate bit array.
 package utility
 
+import "bytes"
+
 // Bit represents 1 bit data.
 type Bit int
 
@@ -46,4 +48,30 @@ func RotateBits(a []Bit, start, length int) []Bit {
 		b[i] = a[(start+i)%len(a)]
 	}
 	return b
+}
+
+func ToString(bits []Bit) string {
+	var bitString bytes.Buffer
+
+	for _, bit := range bits {
+		if bit == 0 {
+			bitString.WriteString("0")
+		} else {
+			bitString.WriteString("1")
+		}
+	}
+	return bitString.String()
+}
+
+func ToBitSlice(bitString string) []Bit {
+
+	var bitSlice []Bit
+	for _, character := range bitString {
+		if character == 48 {
+			bitSlice = append(bitSlice, Zero)
+		} else {
+			bitSlice = append(bitSlice, One)
+		}
+	}
+	return bitSlice
 }
