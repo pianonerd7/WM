@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func random(min, max int) int {
+func Random(min, max int) int {
 	rand.Seed(time.Now().Unix())
 	return rand.Intn(max-min) + min
 }
@@ -13,6 +13,7 @@ func random(min, max int) int {
 // getRandomBytes return a splice of bits
 func GetRandomBytes() []Bit {
 	byteSlice := make([]byte, 2)
+	rand.Seed(time.Now().Unix())
 	rand.Read(byteSlice)
 	return BytesToBits(byteSlice)
 }
