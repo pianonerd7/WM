@@ -2,7 +2,6 @@ package watermark
 
 import (
 	"bytes"
-	"fmt"
 
 	"code.uber.internal/engsec/syntacticsub/sql"
 	"code.uber.internal/engsec/syntacticsub/usubstitute"
@@ -14,8 +13,9 @@ func EmbedMessageForAllEmail(message string, emails []string) []string {
 	var embeddedMessages []string
 	for _, email := range emails {
 		bitSecret := utility.GetWaterMark(email)
-		fmt.Println(bitSecret)
-		embeddedMessages = append(embeddedMessages, EmbedMessage(message, bitSecret))
+		message := EmbedMessage(message, bitSecret)
+		message = "{" + message + "}"
+		embeddedMessages = append(embeddedMessages, message)
 	}
 
 	return embeddedMessages

@@ -2,6 +2,7 @@ package utility
 
 import (
 	"math/rand"
+	"strings"
 	"time"
 
 	"code.uber.internal/engsec/syntacticsub/sql"
@@ -44,4 +45,8 @@ func GetWaterMark(email string) []Bit {
 		return bits
 	}
 	return ToBitSlice(existingWaterMark)
+}
+
+func SplitEmailToSlice(emails string) []string {
+	return strings.Split(emails, ",")
 }

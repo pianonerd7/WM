@@ -1,7 +1,6 @@
 package usubstitute
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -151,7 +150,6 @@ func createMapForMessage(words []string) map[string][]string {
 
 func GetMapFromMessage(message string) map[string][]string {
 	words := MessageToWords(message)
-	fmt.Println(words)
 	return createMapForMessage(words)
 }
 
